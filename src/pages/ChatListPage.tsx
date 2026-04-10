@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { MessageSquare, Plus, X } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import * as signalR from '@microsoft/signalr';
+import { API_BASE_URL } from '../api/config';
 
 interface ChatListItem {
   id?: string;
@@ -60,9 +61,9 @@ export default function ChatListPage() {
 
       try {
         const [profileResponse, chatsResponse] = await Promise.all([
-          axios.get<UserProfile>('https://localhost:7052/api/users/profile', config),
-          axios.get<ChatListItem[]>('https://localhost:7052/api/chats', config)
-        ]);
+        axios.get<UserProfile>(`${API_BASE_URL}/api/users/profile`, config),
+        axios.get<ChatListItem[]>(`${API_BASE_URL}/api/chats`, config)
+      ]);
         
         setCurrentUser(profileResponse.data);
         setChats(chatsResponse.data);
@@ -86,7 +87,7 @@ export default function ChatListPage() {
     if (!token) return;
 
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl("https://localhost:7052/hubs/chat", {
+      .withUrl(`${API_BASE_URL}/hubs/chat`, {
         accessTokenFactory: () => token
       })
       .withAutomaticReconnect()
@@ -123,7 +124,7 @@ export default function ChatListPage() {
 
     try {
       const response = await axios.post(
-        'https://localhost:7052/api/chats/personal',
+        `${API_BASE_URL}/api/chats/personal`,
         { targetUserEmail: data.targetUserEmail },
         { headers: { Authorization: `Bearer ${token}` } }
       );

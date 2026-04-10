@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { Mail, Lock, LogIn, HelpCircle } from 'lucide-react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+import { API_BASE_URL } from '../api/config';
 
 interface LoginFormData {
   email: string;
@@ -21,9 +22,7 @@ export default function LoginPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await axios.post('https://localhost:7052/api/auth/login', data);
-      
-      const token = response.data.token;
+      const response = await axios.post(`${API_BASE_URL}/api/auth/login`, data);      const token = response.data.token;
       localStorage.setItem('jwt_token', token);
       
       console.log('Вхід успішний!');

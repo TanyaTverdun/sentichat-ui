@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Mail, User, FileText, Save, LogOut } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { API_BASE_URL } from '../api/config';
 
 interface UserProfileDto {
   id: string;
@@ -41,8 +42,7 @@ export default function UserProfilePage() {
       }
 
       try {
-        const response = await axios.get<UserProfileDto>('https://localhost:7052/api/users/profile', config);
-        setProfile(response.data);
+        const response = await axios.get<UserProfileDto>(`${API_BASE_URL}/api/users/profile`, config);
         reset({
           name: response.data.name,
           email: response.data.email,
@@ -65,7 +65,7 @@ export default function UserProfilePage() {
     setSuccessMessage(null);
 
     try {
-      const response = await axios.put<UserProfileDto>('https://localhost:7052/api/users/profile', data, config);
+const response = await axios.put<UserProfileDto>(`${API_BASE_URL}/api/users/profile`, data, config);
       setProfile(response.data);
       setSuccessMessage('Профіль успішно оновлено! ✨');
       setTimeout(() => setSuccessMessage(null), 3000);

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useLayoutEffect, useRef, type UIEvent } fro
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Send, Loader2 } from 'lucide-react';
+import { API_BASE_URL } from '../api/config';
 import * as signalR from '@microsoft/signalr';
 
 interface MessageDto {
@@ -86,8 +87,7 @@ export default function ChatPage() {
     try {
       if (appendAtStart) setIsLoadingMore(true);
 
-      let url = `https://localhost:7052/api/chats/${chatId}/messages?pageSize=50`;
-      
+      let url = `${API_BASE_URL}/api/chats/${chatId}/messages?pageSize=50`;      
       if (beforeDate) {
         url += `&before=${encodeURIComponent(beforeDate)}`;
       }
@@ -147,7 +147,7 @@ export default function ChatPage() {
 
     const loadInitialData = async () => {
       try {
-        const chatsResponse = await axios.get<ChatInfo[]>('https://localhost:7052/api/chats', config);
+        const chatsResponse = await axios.get<ChatInfo[]>(`${API_BASE_URL}/api/chats`, config);
         const currentChat = chatsResponse.data.find(c => c.chatId === chatId || (c as any).id === chatId);
         
         if (currentChat) {
@@ -166,7 +166,7 @@ export default function ChatPage() {
     loadInitialData();
 
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl("https://localhost:7052/hubs/chat", {
+      .withUrl(`${API_BASE_URL}/hubs/chat`, {
         accessTokenFactory: () => token
       })
       .withAutomaticReconnect()
@@ -240,7 +240,7 @@ export default function ChatPage() {
 
     try {
       const response = await axios.post<MessageDto>(
-        `https://localhost:7052/api/chats/${chatId}/messages`,
+        `${API_BASE_URL}/api/chats/${chatId}/messages`,
         { content: newMessage },
         { headers: { Authorization: `Bearer ${token}` } }
       );
